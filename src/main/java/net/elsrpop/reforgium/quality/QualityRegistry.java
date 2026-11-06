@@ -1,0 +1,182 @@
+package net.elsrpop.reforgium.quality;
+
+import net.elsrpop.reforgium.quality.attribute.QualityAttribute;
+import net.elsrpop.reforgium.quality.attribute.QualityModifier;
+
+import java.util.List;
+
+public class QualityRegistry {
+
+    public static void registerAll() {
+
+        // ARMAS
+
+        //Malas
+
+        register("very_heavy", "Muy pesada", "",
+                QualityRarity.BAD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_SPEED, -20, true),
+                modifier(QualityAttribute.MOVEMENT_SPEED,-15, true));
+
+        register("no_sharpening", "Sin filo", "",
+                QualityRarity.BAD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_DAMAGE, -25, true));
+
+        register("short", "corta", "",
+                QualityRarity.BAD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_REACH, -20, true));
+
+        register("about_to_break", "A punto de romperse", "",
+                QualityRarity.BAD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.MAX_DURABILITY, -30, true));
+
+        register("worn", "Gastada", "",
+                QualityRarity.BAD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.MAX_DURABILITY, -20, true),
+                modifier(QualityAttribute.ATTACK_DAMAGE, -5, true));
+
+        //Comunes
+
+        register("light", "Ligera", "",
+                QualityRarity.COMMON, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_SPEED, 10, true),
+                modifier(QualityAttribute.ATTACK_DAMAGE, -1, false));
+
+        register("small", "Pequeña", "",
+                QualityRarity.COMMON, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_REACH, -5, true));
+
+        register("unstable", "Inestable", "",
+                QualityRarity.COMMON, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_DAMAGE, 0.5, false),
+                modifier(QualityAttribute.MAX_DURABILITY, -20, true),
+                modifier(QualityAttribute.MOVEMENT_SPEED, -5, true));
+
+        register("heavy", "Pesada", "",
+                QualityRarity.COMMON, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_DAMAGE, 1, false),
+                modifier(QualityAttribute.ATTACK_SPEED, -15, true),
+                modifier(QualityAttribute.MOVEMENT_SPEED, -15, true));
+
+
+
+        //buenas
+
+        register("sharp", "Afilada", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_DAMAGE, 1, false));
+
+        register("balanced", "Equilibrada", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_DAMAGE, 0.5, false),
+                modifier(QualityAttribute.MAX_DURABILITY, 5, true),
+                modifier(QualityAttribute.ATTACK_SPEED, 5, true));
+
+        register("sharp", "resistente", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.MAX_DURABILITY, 15, true));
+
+        register("resistant", "vital", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.MAX_HEALTH, 2, false));
+
+        register("long", "Larga", "Aumenta el alcance de ataque en 1 bloque.",
+                QualityRarity.RARE, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_REACH, 1, false));
+
+        register("bloodthirsty", "Sanguinaria", "Recupera 1 punto de vida al golpear.",
+                QualityRarity.EXOTIC, EquipmentType.WEAPON,
+                modifier(QualityAttribute.LIFE_STEAL, 1, false));
+
+        register("venomous", "Venenosa", "Añade veneno a tus golpes.",
+                QualityRarity.EXOTIC, EquipmentType.WEAPON);
+
+
+        // HERRAMIENTAS
+        register("mining", "Minera",
+                "Aumenta un 100% la velocidad de minería y 5 bloques el alcance de bloque.",
+                QualityRarity.COMMON, EquipmentType.TOOL,
+                modifier(QualityAttribute.MINING_SPEED, 100, true),
+                modifier(QualityAttribute.BLOCK_REACH, 5, false));
+
+        register("efficient", "Eficiente", "Aumenta la velocidad de minería un 8%.",
+                QualityRarity.GOOD, EquipmentType.TOOL,
+                modifier(QualityAttribute.MINING_SPEED, 8, true));
+
+        register("durable", "Resistente", "Aumenta la durabilidad un 20%.",
+                QualityRarity.RARE, EquipmentType.TOOL,
+                modifier(QualityAttribute.MAX_DURABILITY, 20, true));
+
+        register("excavator", "Excavadora",
+                "Aumenta la velocidad de minería un 10% y el alcance de bloque en 1.",
+                QualityRarity.EPIC, EquipmentType.TOOL,
+                modifier(QualityAttribute.MINING_SPEED, 10, true),
+                modifier(QualityAttribute.BLOCK_REACH, 1, false));
+
+
+        // ARMADURAS
+        register("guardian", "Guardiana", "Añade 1 punto de armadura.",
+                QualityRarity.COMMON, EquipmentType.ARMOR,
+                modifier(QualityAttribute.JUMP_HEIGHT, 10000, true));
+
+        register("robust", "Robusta", "Aumenta la durabilidad un 15%.",
+                QualityRarity.GOOD, EquipmentType.ARMOR,
+                modifier(QualityAttribute.MAX_DURABILITY, 15, true));
+
+        register("agile", "Ágil", "Aumenta la velocidad de movimiento un 3%.",
+                QualityRarity.RARE, EquipmentType.ARMOR,
+                modifier(QualityAttribute.MOVEMENT_SPEED, 3, true));
+
+        register("vital", "Vital", "Añade 1 corazón de vida máxima.",
+                QualityRarity.EPIC, EquipmentType.ARMOR,
+                modifier(QualityAttribute.MAX_HEALTH, 2, false));
+
+
+        // ESCUDOS
+        register("fortified", "Fortificado", "Aumenta la durabilidad un 20%.",
+                QualityRarity.COMMON, EquipmentType.SHIELD,
+                modifier(QualityAttribute.MAX_DURABILITY, 20, true));
+
+        register("protector", "Protector", "Añade 1 punto de armadura.",
+                QualityRarity.GOOD, EquipmentType.SHIELD,
+                modifier(QualityAttribute.ARMOR, 1, false));
+
+        register("light", "Ligero", "Aumenta la velocidad de movimiento un 3%.",
+                QualityRarity.RARE, EquipmentType.SHIELD,
+                modifier(QualityAttribute.MOVEMENT_SPEED, 3, true));
+
+        register("reinforced", "Reforzado",
+                "Añade 1 punto de armadura y un 10% de durabilidad.",
+                QualityRarity.EPIC, EquipmentType.SHIELD,
+                modifier(QualityAttribute.ARMOR, 1, false),
+                modifier(QualityAttribute.MAX_DURABILITY, 10, true));
+    }
+
+    private static QualityModifier modifier(
+            QualityAttribute attribute,
+            double value,
+            boolean percentage
+    ) {
+        return new QualityModifier(attribute, value, percentage);
+    }
+
+    private static void register(
+            String id,
+            String name,
+            String description,
+            QualityRarity rarity,
+            EquipmentType type,
+            QualityModifier... modifiers
+    ) {
+        QualityManager.register(
+                new QualityDefinition(
+                        id,
+                        name,
+                        description,
+                        rarity,
+                        type,
+                        List.of(modifiers)
+                )
+        );
+    }
+}
