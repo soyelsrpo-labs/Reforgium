@@ -58,8 +58,6 @@ public class QualityRegistry {
                 modifier(QualityAttribute.ATTACK_SPEED, -15, true),
                 modifier(QualityAttribute.MOVEMENT_SPEED, -15, true));
 
-
-
         //buenas
 
         register("sharp", "Afilada", "",
@@ -72,17 +70,26 @@ public class QualityRegistry {
                 modifier(QualityAttribute.MAX_DURABILITY, 5, true),
                 modifier(QualityAttribute.ATTACK_SPEED, 5, true));
 
-        register("sharp", "resistente", "",
+        register("resistant", "Resistente", "",
                 QualityRarity.GOOD, EquipmentType.WEAPON,
                 modifier(QualityAttribute.MAX_DURABILITY, 15, true));
 
-        register("resistant", "vital", "",
+        register("powered", "Poderosa", "",
                 QualityRarity.GOOD, EquipmentType.WEAPON,
-                modifier(QualityAttribute.MAX_HEALTH, 2, false));
+                modifier(QualityAttribute.ATTACK_DAMAGE, 0.5, true),
+                modifier(QualityAttribute.KNOCKBACK, 0.5, false));
 
-        register("long", "Larga", "Aumenta el alcance de ataque en 1 bloque.",
-                QualityRarity.RARE, EquipmentType.WEAPON,
-                modifier(QualityAttribute.ATTACK_REACH, 1, false));
+        register("flexible", "Flexible", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_REACH, 0.2, false),
+                modifier(QualityAttribute.ATTACK_SPEED, 15, true));
+
+        register("extensive", "Extensa", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_REACH, 0.5, false));
+
+
+
 
         register("bloodthirsty", "Sanguinaria", "Recupera 1 punto de vida al golpear.",
                 QualityRarity.EXOTIC, EquipmentType.WEAPON,

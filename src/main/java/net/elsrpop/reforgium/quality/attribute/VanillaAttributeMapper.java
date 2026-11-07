@@ -25,6 +25,7 @@ public class VanillaAttributeMapper {
 
             case LUCK -> Attributes.LUCK;
             case JUMP_HEIGHT -> ModAttributes.JUMP_HEIGHT;
+            case KNOCKBACK -> Attributes.ATTACK_KNOCKBACK;
 
             default -> null;
         };
