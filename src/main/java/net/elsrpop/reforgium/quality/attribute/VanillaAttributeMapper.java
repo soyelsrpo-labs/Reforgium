@@ -15,6 +15,7 @@ public class VanillaAttributeMapper {
             case ATTACK_DAMAGE -> Attributes.ATTACK_DAMAGE;
             case ATTACK_SPEED -> Attributes.ATTACK_SPEED;
             case ATTACK_REACH -> Attributes.ENTITY_INTERACTION_RANGE;
+            case SWEEPING_DAMAGE -> Attributes.SWEEPING_DAMAGE_RATIO;
             case BLOCK_REACH -> Attributes.BLOCK_INTERACTION_RANGE;
 
             case ARMOR -> Attributes.ARMOR;

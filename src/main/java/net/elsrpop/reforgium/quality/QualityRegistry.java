@@ -28,12 +28,25 @@ public class QualityRegistry {
 
         register("about_to_break", "A punto de romperse", "",
                 QualityRarity.BAD, EquipmentType.WEAPON,
-                modifier(QualityAttribute.MAX_DURABILITY, -30, true));
+                modifier(QualityAttribute.MAX_DURABILITY, -50, true));
 
         register("worn", "Gastada", "",
                 QualityRarity.BAD, EquipmentType.WEAPON,
                 modifier(QualityAttribute.MAX_DURABILITY, -20, true),
                 modifier(QualityAttribute.ATTACK_DAMAGE, -5, true));
+
+        register("unbalanced", "Desequilibrada", "",
+                QualityRarity.BAD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_DAMAGE, -10, true),
+                modifier(QualityAttribute.ATTACK_SPEED, -10, true));
+
+        register("jinxed", "Impía", "",
+                QualityRarity.BAD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.LUCK, -1, false));
+
+        register("draining", "Drenante", "",
+                QualityRarity.BAD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.MAX_HEALTH, -2, false));
 
         //Comunes
 
@@ -58,13 +71,48 @@ public class QualityRegistry {
                 modifier(QualityAttribute.ATTACK_SPEED, -15, true),
                 modifier(QualityAttribute.MOVEMENT_SPEED, -15, true));
 
+        register("crude", "Tosca", "",
+                QualityRarity.COMMON, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_DAMAGE, 1, false),
+                modifier(QualityAttribute.MAX_DURABILITY, -20, true));
+
+        register("sturdy", "Sólida", "",
+                QualityRarity.COMMON, EquipmentType.WEAPON,
+                modifier(QualityAttribute.MAX_DURABILITY, 10, true),
+                modifier(QualityAttribute.ATTACK_SPEED, -5, true));
+
+        register("stiff", "Rígida", "",
+                QualityRarity.COMMON, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_REACH, 5, true),
+                modifier(QualityAttribute.ATTACK_SPEED, -10, true));
+
+        register("airy", "Aérea", "",
+                QualityRarity.COMMON, EquipmentType.WEAPON,
+                modifier(QualityAttribute.MOVEMENT_SPEED, 5, true),
+                modifier(QualityAttribute.ATTACK_DAMAGE, -1, false));
+
+        register("rough", "Áspera", "",
+                QualityRarity.COMMON, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_DAMAGE, 0.5, false),
+                modifier(QualityAttribute.ATTACK_SPEED, -5, true));
+
+        register("fortunate", "Afortunada", "",
+                QualityRarity.COMMON, EquipmentType.WEAPON,
+                modifier(QualityAttribute.LUCK, 1, false),
+                modifier(QualityAttribute.ATTACK_DAMAGE, -1, false));
+
+        register("lively", "Vivaz", "",
+                QualityRarity.COMMON, EquipmentType.WEAPON,
+                modifier(QualityAttribute.MAX_HEALTH, 1, false),
+                modifier(QualityAttribute.ATTACK_SPEED, -10, true));
+
         //buenas
 
         register("sharp", "Afilada", "",
                 QualityRarity.GOOD, EquipmentType.WEAPON,
                 modifier(QualityAttribute.ATTACK_DAMAGE, 1, false));
 
-        register("balanced", "Equilibrada", "",
+        register("balanced1", "Equilibrada i", "",
                 QualityRarity.GOOD, EquipmentType.WEAPON,
                 modifier(QualityAttribute.ATTACK_DAMAGE, 0.5, false),
                 modifier(QualityAttribute.MAX_DURABILITY, 5, true),
@@ -76,7 +124,7 @@ public class QualityRegistry {
 
         register("powered", "Poderosa", "",
                 QualityRarity.GOOD, EquipmentType.WEAPON,
-                modifier(QualityAttribute.ATTACK_DAMAGE, 0.5, true),
+                modifier(QualityAttribute.ATTACK_DAMAGE, 0.5, false),
                 modifier(QualityAttribute.KNOCKBACK, 0.5, false));
 
         register("flexible", "Flexible", "",
@@ -88,8 +136,94 @@ public class QualityRegistry {
                 QualityRarity.GOOD, EquipmentType.WEAPON,
                 modifier(QualityAttribute.ATTACK_REACH, 0.5, false));
 
+        register("swift", "Rápida", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_SPEED, 20, true));
+
+        register("precise", "Precisa", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_REACH, 0.3, false),
+                modifier(QualityAttribute.ATTACK_DAMAGE, 0.5, false));
+
+        register("forged", "Forjada", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_DAMAGE, 0.5, false),
+                modifier(QualityAttribute.MAX_DURABILITY, 10, true));
+
+        register("stalwart", "Firme", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.KNOCKBACK, 0.3, false),
+                modifier(QualityAttribute.MAX_DURABILITY, 10, true));
+
+        register("lucky", "Venturosa", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.LUCK, 1, false),
+                modifier(QualityAttribute.ATTACK_DAMAGE, 0.5, false));
+
+        register("expansive", "Expansivo", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.SWEEPING_DAMAGE, 0.10, false));
+
+        //RARAS
+
+        register("long", "Larga", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_REACH, 1, false));
+
+        register("balanced2", "Equilibrada II", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_DAMAGE, 1, false),
+                modifier(QualityAttribute.MAX_DURABILITY, 10, true),
+                modifier(QualityAttribute.ATTACK_SPEED, 10, true));
+
+        register("resistant", "Resistente", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.MAX_DURABILITY, 15, true));
+
+        register("powered", "Poderosa", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_DAMAGE, 0.5, false),
+                modifier(QualityAttribute.KNOCKBACK, 0.5, false));
+
+        register("flexible", "Flexible", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_REACH, 0.2, false),
+                modifier(QualityAttribute.ATTACK_SPEED, 15, true));
+
+        register("extensive", "Extensa", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_REACH, 0.5, false));
+
+        register("swift", "Rápida", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_SPEED, 20, true));
+
+        register("precise", "Precisa", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_REACH, 0.3, false),
+                modifier(QualityAttribute.ATTACK_DAMAGE, 0.5, false));
+
+        register("forged", "Forjada", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.ATTACK_DAMAGE, 0.5, false),
+                modifier(QualityAttribute.MAX_DURABILITY, 10, true));
+
+        register("stalwart", "Firme", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.KNOCKBACK, 0.3, false),
+                modifier(QualityAttribute.MAX_DURABILITY, 10, true));
+
+        register("lucky", "Venturosa", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.LUCK, 1, false),
+                modifier(QualityAttribute.ATTACK_DAMAGE, 0.5, false));
+
+        register("expansive", "Expansivo", "",
+                QualityRarity.GOOD, EquipmentType.WEAPON,
+                modifier(QualityAttribute.SWEEPING_DAMAGE, 0.10, false));
 
 
+        //EPICAS
 
         register("bloodthirsty", "Sanguinaria", "Recupera 1 punto de vida al golpear.",
                 QualityRarity.EXOTIC, EquipmentType.WEAPON,

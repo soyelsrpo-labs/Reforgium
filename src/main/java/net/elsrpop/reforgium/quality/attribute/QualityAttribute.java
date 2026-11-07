@@ -5,6 +5,7 @@ public enum QualityAttribute {
     ATTACK_DAMAGE,
     ATTACK_SPEED,
     ATTACK_REACH,
+    SWEEPING_DAMAGE,
 
     MINING_SPEED,
     BLOCK_REACH,
