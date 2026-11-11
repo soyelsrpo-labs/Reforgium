@@ -32,7 +32,16 @@ public class EquipmentTypeHelper {
 
         Item item = stack.getItem();
 
-        // Detección por herencia de Minecraft.
+        if (item instanceof ArmorItem armorItem) {
+            return switch (armorItem.getType()) {
+                case HELMET -> EquipmentType.ARMOR_HELMET;
+                case CHESTPLATE -> EquipmentType.ARMOR_CHESTPLATE;
+                case LEGGINGS -> EquipmentType.ARMOR_LEGGINGS;
+                case BOOTS -> EquipmentType.ARMOR_BOOTS;
+                default -> EquipmentType.ARMOR;
+            };
+        }
+
         if (item instanceof SwordItem) {
             return EquipmentType.WEAPON;
         }
@@ -41,15 +50,10 @@ public class EquipmentTypeHelper {
             return EquipmentType.TOOL;
         }
 
-        if (item instanceof ArmorItem) {
-            return EquipmentType.ARMOR;
-        }
-
         if (item instanceof ShieldItem) {
             return EquipmentType.SHIELD;
         }
 
-        // Detección mediante tags.
         if (stack.is(WEAPONS)) {
             return EquipmentType.WEAPON;
         }
@@ -74,6 +78,21 @@ public class EquipmentTypeHelper {
             return false;
         }
 
-        return getType(stack) == quality.equipmentType();
+        EquipmentType itemType = getType(stack);
+        EquipmentType qualityType = quality.equipmentType();
+
+        if (itemType == null) {
+            return false;
+        }
+
+        if (qualityType == EquipmentType.ARMOR) {
+            return itemType == EquipmentType.ARMOR
+                    || itemType == EquipmentType.ARMOR_HELMET
+                    || itemType == EquipmentType.ARMOR_CHESTPLATE
+                    || itemType == EquipmentType.ARMOR_LEGGINGS
+                    || itemType == EquipmentType.ARMOR_BOOTS;
+        }
+
+        return itemType == qualityType;
     }
 }

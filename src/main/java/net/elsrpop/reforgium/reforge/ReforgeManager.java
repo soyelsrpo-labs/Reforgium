@@ -91,7 +91,7 @@ public final class ReforgeManager {
 
     /**
      * Realiza una reforja y devuelve una copia del objeto con su nueva calidad.
-     *
+     * <p>
      * No consume materiales ni durabilidad del martillo.
      */
     public static Optional<ItemStack> reforge(
@@ -136,7 +136,7 @@ public final class ReforgeManager {
             // Buscamos todas las calidades compatibles con esa rareza.
             List<QualityDefinition> availableQualities = QualityManager.getAll().stream()
                     .filter(quality -> quality.rarity() == rarity)
-                    .filter(quality -> quality.equipmentType() == equipmentType)
+                    .filter(quality -> EquipmentTypeHelper.isCompatible(original, quality))
                     .toList();
 
             // Elegimos una calidad aleatoria entre las disponibles.

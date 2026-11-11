@@ -20,7 +20,8 @@ public class QualityRandomizer {
         int totalWeight = 0;
 
         for (QualityDefinition quality : QualityManager.getAll()) {
-            if (quality.equipmentType() != equipmentType) {
+
+            if (!isCompatible(equipmentType, quality.equipmentType())) {
                 continue;
             }
 
@@ -50,6 +51,24 @@ public class QualityRandomizer {
         }
 
         return null;
+    }
+
+    private static boolean isCompatible(
+            EquipmentType itemType,
+            EquipmentType qualityType
+    ) {
+        if (itemType == qualityType) {
+            return true;
+        }
+
+        return switch (itemType) {
+            case ARMOR_HELMET,
+                 ARMOR_CHESTPLATE,
+                 ARMOR_LEGGINGS,
+                 ARMOR_BOOTS -> qualityType == EquipmentType.ARMOR;
+
+            default -> false;
+        };
     }
 
     private static int getRarityWeight(QualityRarity rarity) {

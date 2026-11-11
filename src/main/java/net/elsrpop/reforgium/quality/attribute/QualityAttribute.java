@@ -8,6 +8,7 @@ public enum QualityAttribute {
     SWEEPING_DAMAGE,
 
     MINING_SPEED,
+    BREAK_SPEED,
     BLOCK_REACH,
     MAX_DURABILITY,
 
