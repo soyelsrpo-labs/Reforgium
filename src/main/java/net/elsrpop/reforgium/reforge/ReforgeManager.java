@@ -1,6 +1,7 @@
 
 package net.elsrpop.reforgium.reforge;
 
+import net.elsrpop.reforgium.Reforgium;
 import net.elsrpop.reforgium.quality.EquipmentType;
 import net.elsrpop.reforgium.quality.EquipmentTypeHelper;
 import net.elsrpop.reforgium.quality.QualityDefinition;
@@ -147,9 +148,7 @@ public final class ReforgeManager {
 
                 selectedQuality = availableQualities.get(randomIndex);
 
-                System.out.println("[Reforgium] Rareza: " + rarity
-                        + " | Calidades disponibles: " + availableQualities.size()
-                        + " | Seleccionada: " + selectedQuality.id());
+                Reforgium.LOGGER.debug("Rareza: {} | Seleccionada: {}", rarity, selectedQuality.id());
 
                 break;
             }
