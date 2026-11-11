@@ -1,5 +1,7 @@
 package net.elsrpop.reforgium;
 
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
 import net.elsrpop.reforgium.quality.QualityRegistry;
 import net.elsrpop.reforgium.reforge.ReforgeMaterialRegistry;
 import net.elsrpop.reforgium.registry.ModBlocks;
@@ -16,6 +18,8 @@ import net.elsrpop.reforgium.registry.ModAttributes;
 public class Reforgium {
 
     public static final String MOD_ID = "reforgium";
+
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public Reforgium(IEventBus modEventBus) {
 
