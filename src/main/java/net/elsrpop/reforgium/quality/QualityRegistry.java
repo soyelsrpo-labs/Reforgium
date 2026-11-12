@@ -9,7 +9,7 @@ public class QualityRegistry {
 
     public static void registerAll() {
 
-        // ARMAS
+        // ===== ARMAS =====
 
         //Malas
 
@@ -324,91 +324,246 @@ public class QualityRegistry {
                 modifier(QualityAttribute.MINING_SPEED, 10, true),
                 modifier(QualityAttribute.BLOCK_REACH, 1, false));
 
+        // ===== ARMADURAS =====
 
-        // ARMADURAS
+        //Malas
 
-        //MALAS
-
-        register("fragile", "Fragil", "",
+        register("cracked", "Agrietada", "",
                 QualityRarity.BAD, EquipmentType.ARMOR,
-                modifier(QualityAttribute.MAX_DURABILITY, -50, true));
+                modifier(QualityAttribute.ARMOR, -1, false),
+                modifier(QualityAttribute.MAX_DURABILITY, -25, true));
 
-        register("heavy_armor", "Pesada", "",
+        register("flimsy", "Endeble", "",
                 QualityRarity.BAD, EquipmentType.ARMOR,
-                modifier(QualityAttribute.MOVEMENT_SPEED, -30, true));
+                modifier(QualityAttribute.ARMOR, -1.5, false));
 
-        register("damaged_armor", "Dañada", "",
+        register("clunky", "Torpe", "",
                 QualityRarity.BAD, EquipmentType.ARMOR,
-                modifier(QualityAttribute.MAX_DURABILITY, -15, true),
-                modifier(QualityAttribute.ARMOR, -1, false));
+                modifier(QualityAttribute.ARMOR, -0.5, false),
+                modifier(QualityAttribute.MOVEMENT_SPEED, -10, true));
 
-        register("overwhelming", "Agobiante", "",
+        register("corroded", "Corroída", "",
                 QualityRarity.BAD, EquipmentType.ARMOR,
-                modifier(QualityAttribute.MOVEMENT_SPEED, -10, true),
-                modifier(QualityAttribute.MAX_HEALTH, -2, false));
+                modifier(QualityAttribute.ARMOR, -1, false),
+                modifier(QualityAttribute.ARMOR_TOUGHNESS, -1, false));
 
-        register("uncomfortable", "Incómoda", "",
-                QualityRarity.BAD, EquipmentType.ARMOR,
-                modifier(QualityAttribute.MOVEMENT_SPEED, -10, true),
-                modifier(QualityAttribute.ARMOR, -0.5, false));
+        //Comunes
 
-        //COMUNES
-
-        register("guardian", "Liviana", "",
-                QualityRarity.COMMON, EquipmentType.ARMOR,
-                modifier(QualityAttribute.MOVEMENT_SPEED, 10, true),
-                modifier(QualityAttribute.ARMOR, -1, false));
-
-        register("guardian", "Inestable", "",
+        register("padded", "Acolchada", "",
                 QualityRarity.COMMON, EquipmentType.ARMOR,
                 modifier(QualityAttribute.ARMOR, 0.5, false),
-                modifier(QualityAttribute.MAX_DURABILITY, -20, true));
+                modifier(QualityAttribute.MOVEMENT_SPEED, -5, true));
 
-        register("robust", "Dura", "",
+        register("loose", "Holgada", "",
                 QualityRarity.COMMON, EquipmentType.ARMOR,
-                modifier(QualityAttribute.MAX_DURABILITY, 20, true),
-                modifier(QualityAttribute.MOVEMENT_SPEED, -15 , true));
-
-        register("robust", "lenta", "",
-                QualityRarity.COMMON, EquipmentType.ARMOR,
-                modifier(QualityAttribute.MOVEMENT_SPEED, -25 , true));
-
-        //BUENAS
-
-        register("fragile", "protectora", "",
-                QualityRarity.GOOD, EquipmentType.ARMOR,
-                modifier(QualityAttribute.ARMOR, 1, false));
-
-        register("heavy_armor", "Reforzada", "",
-                QualityRarity.GOOD, EquipmentType.ARMOR,
-                modifier(QualityAttribute.MAX_DURABILITY, 25, true));
-
-        register("overwhelming", "Ligera", "",
-                QualityRarity.GOOD, EquipmentType.ARMOR,
-                modifier(QualityAttribute.MOVEMENT_SPEED, 20, true));
-
-        register("uncomfortable", "Cómoda", "",
-                QualityRarity.GOOD, EquipmentType.ARMOR,
-                modifier(QualityAttribute.ARMOR,  0.5, false),
+                modifier(QualityAttribute.ARMOR, -0.5, false),
                 modifier(QualityAttribute.MOVEMENT_SPEED, 10, true));
 
-        //RARAS
+        register("patched", "Remendada", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, -0.5, false),
+                modifier(QualityAttribute.MAX_DURABILITY, 15, true));
 
-        register("fragile", "protectora", "",
+        register("stout", "Recia", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 0.5, false),
+                modifier(QualityAttribute.MAX_DURABILITY, 10, true));
+
+        register("cured", "Curtida", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, -0.5, false),
+                modifier(QualityAttribute.ARMOR_TOUGHNESS, 0.5, false));
+
+        //Buenas
+
+        register("hardened", "Endurecida", "",
                 QualityRarity.GOOD, EquipmentType.ARMOR,
                 modifier(QualityAttribute.ARMOR, 1, false));
 
-        register("heavy_armor", "Reforzada", "",
+        register("tempered", "Templada", "",
                 QualityRarity.GOOD, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 1.5, false),
+                modifier(QualityAttribute.MOVEMENT_SPEED, -5, true));
+
+        register("lightweight", "Aligerada", "",
+                QualityRarity.GOOD, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 0.5, false),
+                modifier(QualityAttribute.MOVEMENT_SPEED, 10, true));
+
+        register("snug", "Ajustada", "",
+                QualityRarity.GOOD, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 1, false),
+                modifier(QualityAttribute.MAX_DURABILITY, 10, true));
+
+        register("steadfast", "Estoica", "",
+                QualityRarity.GOOD, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 0.5, false),
+                modifier(QualityAttribute.KNOCKBACK_RESISTANCE, 0.1, false));
+
+        register("plated", "Chapada", "",
+                QualityRarity.GOOD, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 1.5, false),
+                modifier(QualityAttribute.MAX_DURABILITY, -10, true));
+
+        //Raras
+
+        register("steeled", "Acerada", "",
+                QualityRarity.RARE, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 2, false));
+
+        register("bastion", "Bastión", "",
+                QualityRarity.RARE, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 2, false),
+                modifier(QualityAttribute.KNOCKBACK_RESISTANCE, 0.1, false));
+
+        register("lithe", "Grácil", "",
+                QualityRarity.RARE, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 1.5, false),
+                modifier(QualityAttribute.MOVEMENT_SPEED, 10, true));
+
+        register("enduring", "Perdurable", "",
+                QualityRarity.RARE, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 2, false),
                 modifier(QualityAttribute.MAX_DURABILITY, 25, true));
 
-        register("overwhelming", "Ligera", "",
-                QualityRarity.GOOD, EquipmentType.ARMOR,
+        register("warded", "Resguardada", "",
+                QualityRarity.RARE, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 2.5, false),
+                modifier(QualityAttribute.MOVEMENT_SPEED, -10, true));
+
+        //Épicas
+
+        register("adamant", "Adamantina", "",
+                QualityRarity.EPIC, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 3, false),
+                modifier(QualityAttribute.ARMOR_TOUGHNESS, 1, false));
+
+        register("aegis", "Égida", "",
+                QualityRarity.EPIC, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 2.5, false),
+                modifier(QualityAttribute.KNOCKBACK_RESISTANCE, 0.2, false));
+
+        register("ethereal", "Etérea", "",
+                QualityRarity.EPIC, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 2.5, false),
+                modifier(QualityAttribute.MOVEMENT_SPEED, 15, true));
+
+        register("ironclad", "Acorazada", "",
+                QualityRarity.EPIC, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 3.5, false),
+                modifier(QualityAttribute.MOVEMENT_SPEED, -10, true));
+
+        register("unbreakable", "Inquebrantable", "",
+                QualityRarity.EPIC, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 3, false),
+                modifier(QualityAttribute.MAX_DURABILITY, 40, true));
+
+        //Exóticas
+
+        //Legendarias
+
+        register("mythical", "Mítica", "",
+                QualityRarity.LEGENDARY, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 5, false),
+                modifier(QualityAttribute.ARMOR_TOUGHNESS, 2, false),
+                modifier(QualityAttribute.MAX_DURABILITY, 60, true));
+
+        register("celestial", "Celestial", "",
+                QualityRarity.LEGENDARY, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 4.5, false),
+                modifier(QualityAttribute.MOVEMENT_SPEED, 10, true));
+
+        register("colossus", "Coloso", "",
+                QualityRarity.LEGENDARY, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 5.5, false),
+                modifier(QualityAttribute.KNOCKBACK_RESISTANCE, 0.5, false),
+                modifier(QualityAttribute.MOVEMENT_SPEED, 10, true));
+
+        register("everlasting", "Eterna", "",
+                QualityRarity.LEGENDARY, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 4, false),
+                modifier(QualityAttribute.ARMOR_TOUGHNESS, 1, false),
+                modifier(QualityAttribute.MAX_DURABILITY, 150, true));
+
+        register("ascendant", "Ascendente", "",
+                QualityRarity.LEGENDARY, EquipmentType.ARMOR,
+                modifier(QualityAttribute.ARMOR, 5, false),
                 modifier(QualityAttribute.MOVEMENT_SPEED, 20, true));
 
-        register("uncomfortable", "Cómoda", "",
-                QualityRarity.GOOD, EquipmentType.ARMOR,
-                modifier(QualityAttribute.ARMOR,  0.5, false),
+        // ===== ARMADURAS POR PIEZA =====
+
+        // Casco
+
+        register("test_helmet_1", "Test casco 1", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR_HELMET,
+                modifier(QualityAttribute.ARMOR, 2, false));
+
+        register("test_helmet_2", "Test casco 2", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR_HELMET,
+                modifier(QualityAttribute.ARMOR_TOUGHNESS, 2, false));
+
+        register("test_helmet_3", "Test casco 3", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR_HELMET,
+                modifier(QualityAttribute.MAX_HEALTH, 4, false));
+
+        register("test_helmet_4", "Test casco 4", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR_HELMET,
+                modifier(QualityAttribute.MOVEMENT_SPEED, 20, true));
+
+        // Pechera
+
+        register("test_chestplate_1", "Test pechera 1", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR_CHESTPLATE,
+                modifier(QualityAttribute.ARMOR, 3, false));
+
+        register("test_chestplate_2", "Test pechera 2", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR_CHESTPLATE,
+                modifier(QualityAttribute.KNOCKBACK_RESISTANCE, 0.5, false));
+
+        register("test_chestplate_3", "Test pechera 3", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR_CHESTPLATE,
+                modifier(QualityAttribute.MAX_HEALTH, 6, false));
+
+        register("test_chestplate_4", "Test pechera 4", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR_CHESTPLATE,
+                modifier(QualityAttribute.ARMOR, 1, false),
+                modifier(QualityAttribute.ARMOR_TOUGHNESS, 1, false));
+
+        // Pantalones
+
+        register("test_leggings_1", "Test pantalones 1", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR_LEGGINGS,
+                modifier(QualityAttribute.ARMOR, 2, false));
+
+        register("test_leggings_2", "Test pantalones 2", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR_LEGGINGS,
+                modifier(QualityAttribute.MOVEMENT_SPEED, 30, true));
+
+        register("test_leggings_3", "Test pantalones 3", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR_LEGGINGS,
+                modifier(QualityAttribute.MAX_HEALTH, 2, false));
+
+        register("test_leggings_4", "Test pantalones 4", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR_LEGGINGS,
+                modifier(QualityAttribute.ARMOR_TOUGHNESS, 3, false));
+
+        // Botas
+
+        register("test_boots_1", "Test botas 1", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR_BOOTS,
+                modifier(QualityAttribute.ARMOR, 2, false));
+
+        register("test_boots_2", "Test botas 2", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR_BOOTS,
+                modifier(QualityAttribute.MOVEMENT_SPEED, 40, true));
+
+        register("test_boots_3", "Test botas 3", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR_BOOTS,
+                modifier(QualityAttribute.MAX_HEALTH, 2, false));
+
+        register("test_boots_4", "Test botas 4", "",
+                QualityRarity.COMMON, EquipmentType.ARMOR_BOOTS,
+                modifier(QualityAttribute.ARMOR, 1, false),
                 modifier(QualityAttribute.MOVEMENT_SPEED, 10, true));
 
 

@@ -1,19 +1,13 @@
-
 package net.elsrpop.reforgium.quality.attribute;
 
-import net.elsrpop.reforgium.quality.QualityDefinition;
-import net.elsrpop.reforgium.quality.QualityHelper;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -166,70 +160,21 @@ public class QualityTooltipBuilder {
             Set<Holder<Attribute>> supportedAttributes,
             Map<Holder<Attribute>, List<AttributeModifier>> result
     ) {
-        EquipmentSlotGroup slotGroup =
-                slot.getType() == EquipmentSlot.Type.HAND
-                        ? EquipmentSlotGroup.HAND
-                        : EquipmentSlotGroup.bySlot(slot);
-
-        Set<net.minecraft.resources.ResourceLocation> addedIds =
-                new HashSet<>();
-
-        // Modificadores originales del objeto.
-        ItemAttributeModifiers itemModifiers = stack.getOrDefault(
-                DataComponents.ATTRIBUTE_MODIFIERS,
-                ItemAttributeModifiers.EMPTY
-        );
-
-        for (ItemAttributeModifiers.Entry entry : itemModifiers.modifiers()) {
-
-            if (!entry.slot().test(slot)) {
-                continue;
-            }
-
-            if (!supportedAttributes.contains(entry.attribute())) {
-                continue;
+        // Usa los modificadores que el juego aplica de verdad al equipar:
+        // los base del objeto (por ejemplo, los 3 de armadura de unas botas
+        // de diamante) más los que agrega la calidad por ItemAttributeModifierEvent.
+        stack.forEachModifier(slot, (attribute, modifier) -> {
+            if (!supportedAttributes.contains(attribute)) {
+                return;
             }
 
             result.computeIfAbsent(
-                    entry.attribute(),
+                    attribute,
                     key -> new ArrayList<>()
-            ).add(entry.modifier());
-
-            addedIds.add(entry.modifier().id());
-        }
-
-        // Modificadores de calidad.
-        QualityDefinition quality = QualityHelper.getQuality(stack);
-
-        if (quality == null) {
-            return;
-        }
-
-        for (QualityAttributeBuilder.AttributeEntry entry :
-                QualityAttributeBuilder.build(
-                        quality.id(),
-                        quality.modifiers()
-                )) {
-
-            if (!supportedAttributes.contains(entry.attribute())) {
-                continue;
-            }
-
-            if (!slotGroup.test(slot)) {
-                continue;
-            }
-
-            // Evitar agregar dos veces el mismo modificador.
-            if (!addedIds.add(entry.modifier().id())) {
-                continue;
-            }
-
-            result.computeIfAbsent(
-                    entry.attribute(),
-                    key -> new ArrayList<>()
-            ).add(entry.modifier());
-        }
+            ).add(modifier);
+        });
     }
+
     public static EquipmentSlot getEquippedSlot(
             Player player,
             ItemStack stack

@@ -1,4 +1,3 @@
-
 package net.elsrpop.reforgium.quality;
 
 import net.elsrpop.reforgium.Reforgium;
@@ -15,6 +14,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
@@ -83,7 +83,9 @@ public class QualityTooltipHandler {
         return lines;
     }
 
-    @SubscribeEvent
+    // Prioridad mínima: corre después de los demás para que la calidad
+    // quede al final de todo el tooltip.
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onItemTooltip(ItemTooltipEvent event) {
 
         ItemStack stack = event.getItemStack();
@@ -164,7 +166,7 @@ public class QualityTooltipHandler {
         // Estadísticas finales según el tipo de equipo.
         switch (quality.equipmentType()) {
 
-            case ARMOR -> {
+            case ARMOR, ARMOR_HELMET, ARMOR_CHESTPLATE, ARMOR_LEGGINGS, ARMOR_BOOTS -> {
                 addFinalAttribute(
                         event, player, stack,
                         QualityAttribute.ARMOR,

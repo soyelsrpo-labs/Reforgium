@@ -1,7 +1,6 @@
 package net.elsrpop.reforgium.quality.attribute;
 
 import net.elsrpop.reforgium.Reforgium;
-import net.elsrpop.reforgium.quality.EquipmentType;
 import net.elsrpop.reforgium.quality.EquipmentTypeHelper;
 import net.elsrpop.reforgium.quality.QualityDefinition;
 import net.elsrpop.reforgium.quality.QualityHelper;
@@ -12,10 +11,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 
-@EventBusSubscriber(
-        modid = Reforgium.MOD_ID,
-        bus = EventBusSubscriber.Bus.GAME
-)
+@EventBusSubscriber(modid = Reforgium.MOD_ID)
 public class QualityAttributeEventHandler {
 
     @SubscribeEvent
@@ -34,26 +30,28 @@ public class QualityAttributeEventHandler {
             return;
         }
 
-        EquipmentType type = EquipmentTypeHelper.getType(stack);
-
-        if (type != quality.equipmentType()) {
+        if (!EquipmentTypeHelper.isCompatible(stack, quality)) {
             return;
         }
 
         EquipmentSlotGroup slot;
+        String slotKey;
 
-        if (type == EquipmentType.ARMOR
-                && stack.getItem() instanceof ArmorItem armor) {
-
+        if (stack.getItem() instanceof ArmorItem armor) {
             slot = EquipmentSlotGroup.bySlot(armor.getEquipmentSlot());
-
+            slotKey = armor.getEquipmentSlot().getName();
         } else {
             slot = EquipmentSlotGroup.HAND;
+            slotKey = "hand";
         }
+
+        // El id incluye la pieza para que dos piezas con la misma calidad
+        // no se pisen los modificadores entre sí.
+        String idKey = quality.id() + "_" + slotKey;
 
         for (QualityAttributeBuilder.AttributeEntry entry :
                 QualityAttributeBuilder.build(
-                        quality.id(),
+                        idKey,
                         quality.modifiers()
                 )) {
 

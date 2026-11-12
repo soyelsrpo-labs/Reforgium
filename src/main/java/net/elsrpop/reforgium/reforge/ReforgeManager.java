@@ -1,8 +1,6 @@
-
 package net.elsrpop.reforgium.reforge;
 
 import net.elsrpop.reforgium.Reforgium;
-import net.elsrpop.reforgium.quality.EquipmentType;
 import net.elsrpop.reforgium.quality.EquipmentTypeHelper;
 import net.elsrpop.reforgium.quality.QualityDefinition;
 import net.elsrpop.reforgium.quality.QualityHelper;
@@ -118,9 +116,6 @@ public final class ReforgeManager {
         if (!ReforgeHammerItem.hasUses(hammer)) {
             return Optional.empty();
         }
-
-        EquipmentType equipmentType =
-                EquipmentTypeHelper.getType(original);
 
         int tier = ReforgeMaterialRegistry.getTier(
                 BuiltInRegistries.ITEM.getKey(reforgeMaterial.getItem())
