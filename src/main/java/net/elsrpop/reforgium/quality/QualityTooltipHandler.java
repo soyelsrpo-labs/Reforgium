@@ -7,11 +7,14 @@ import net.elsrpop.reforgium.quality.attribute.QualityTooltipBuilder;
 import net.elsrpop.reforgium.quality.attribute.VanillaAttributeMapper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
@@ -83,10 +86,41 @@ public class QualityTooltipHandler {
         return lines;
     }
 
-    // Prioridad mínima: corre después de los demás para que la calidad
-    // quede al final de todo el tooltip.
+    // Prioridad mínima: corre después de los demás.
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onItemTooltip(ItemTooltipEvent event) {
+
+        ItemStack stack = event.getItemStack();
+
+        if (stack.isEmpty()) return;
+
+        if (QualityHelper.getQuality(stack) == null) return;
+
+        // Líneas del modo avanzado (F3+H): durabilidad, id del objeto y
+        // cantidad de componentes. Vanilla las pone justo debajo del nombre;
+        // se sacan y se vuelven a poner al final de todo el tooltip.
+        java.util.List<Component> advancedLines = new java.util.ArrayList<>();
+        String itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+
+        event.getToolTip().removeIf(line -> {
+            boolean advanced = line.getString().equals(itemId)
+                    || (line.getContents() instanceof TranslatableContents translatable
+                    && (translatable.getKey().equals("item.components")
+                    || translatable.getKey().equals("item.durability")));
+
+            if (advanced) {
+                advancedLines.add(line);
+            }
+
+            return advanced;
+        });
+
+        appendQualityTooltip(event);
+
+        event.getToolTip().addAll(advancedLines);
+    }
+
+    private static void appendQualityTooltip(ItemTooltipEvent event) {
 
         ItemStack stack = event.getItemStack();
 
@@ -167,15 +201,18 @@ public class QualityTooltipHandler {
         switch (quality.equipmentType()) {
 
             case ARMOR, ARMOR_HELMET, ARMOR_CHESTPLATE, ARMOR_LEGGINGS, ARMOR_BOOTS -> {
-                addFinalAttribute(
-                        event, player, stack,
-                        QualityAttribute.ARMOR,
+                EquipmentSlot armorSlot =
+                        QualityTooltipBuilder.getTargetSlot(stack);
+
+                addArmorLine(
+                        event, stack, armorSlot,
+                        Attributes.ARMOR,
                         "Armadura"
                 );
 
-                addFinalAttribute(
-                        event, player, stack,
-                        QualityAttribute.ARMOR_TOUGHNESS,
+                addArmorLine(
+                        event, stack, armorSlot,
+                        Attributes.ARMOR_TOUGHNESS,
                         "Dureza de armadura"
                 );
             }
@@ -204,6 +241,74 @@ public class QualityTooltipHandler {
                 // Los escudos no muestran estadísticas finales.
             }
         }
+    }
+
+    // Línea de armadura al estilo vanilla:
+    //   +4 Armadura [+3 base +1 calidad]
+    // El total va en azul (rojo si es negativo) y lo que está entre
+    // corchetes va en gris. Si la pieza no tiene ese atributo (ni base ni
+    // de la calidad), la línea no se muestra.
+    private static void addArmorLine(
+            ItemTooltipEvent event,
+            ItemStack stack,
+            EquipmentSlot slot,
+            Holder<Attribute> attribute,
+            String displayName
+    ) {
+        if (slot == null) return;
+
+        // 0 = valor base de la pieza, 1 = suma plana de la calidad,
+        // 2 = porcentaje de la calidad.
+        double[] sums = new double[3];
+
+        stack.forEachModifier(slot, (modifierAttribute, modifier) -> {
+            if (!modifierAttribute.equals(attribute)) return;
+
+            boolean fromQuality =
+                    modifier.id().getNamespace().equals(Reforgium.MOD_ID);
+
+            switch (modifier.operation()) {
+                case ADD_VALUE -> sums[fromQuality ? 1 : 0] += modifier.amount();
+                case ADD_MULTIPLIED_BASE -> {
+                    if (fromQuality) {
+                        sums[2] += modifier.amount();
+                    }
+                }
+                default -> {
+                }
+            }
+        });
+
+        double base = sums[0];
+        double quality = sums[1] + base * sums[2];
+        double total = base + quality;
+
+        if (base == 0.0 && quality == 0.0) return;
+
+        java.util.List<String> parts = new java.util.ArrayList<>();
+
+        if (base != 0.0) {
+            parts.add(signed(base));
+        }
+
+        if (quality != 0.0) {
+            parts.add(signed(quality));
+        }
+
+        MutableComponent line = Component.literal(
+                "  " + signed(total) + " " + displayName
+        ).withStyle(total < 0 ? ChatFormatting.RED : ChatFormatting.BLUE);
+
+        line.append(
+                Component.literal(" [" + String.join(" ", parts) + "]")
+                        .withStyle(ChatFormatting.GRAY)
+        );
+
+        event.getToolTip().add(line);
+    }
+
+    private static String signed(double value) {
+        return (value < 0 ? "-" : "+") + formatValue(Math.abs(value));
     }
 
     private static void addFinalAttribute(
