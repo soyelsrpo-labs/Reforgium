@@ -218,15 +218,15 @@ public class QualityTooltipHandler {
             }
 
             case WEAPON -> {
-                addFinalAttribute(
+                addWeaponLine(
                         event, player, stack,
-                        QualityAttribute.ATTACK_DAMAGE,
+                        Attributes.ATTACK_DAMAGE,
                         "Daño de ataque"
                 );
 
-                addFinalAttribute(
+                addWeaponLine(
                         event, player, stack,
-                        QualityAttribute.ATTACK_SPEED,
+                        Attributes.ATTACK_SPEED,
                         "Velocidad de ataque"
                 );
             }
@@ -234,7 +234,8 @@ public class QualityTooltipHandler {
             case TOOL -> addFinalAttribute(
                     event, player, stack,
                     QualityAttribute.MINING_SPEED,
-                    "Velocidad de minería"
+                    "Velocidad de minería",
+                    ChatFormatting.BLUE
             );
 
             case SHIELD -> {
@@ -307,6 +308,91 @@ public class QualityTooltipHandler {
         event.getToolTip().add(line);
     }
 
+    // Línea de arma al estilo vanilla, con el desglose solo en números:
+    //   +8 Daño de ataque [1 + 6 + 1]
+    //   +1.6 Velocidad de ataque [4 - 2.4 + 0.32]
+    // Dentro de los corchetes: valor base del jugador, modificador del arma
+    // y aporte de la calidad, cada uno con su signo. Texto en verde oscuro
+    // (rojo si el total es negativo) y corchetes en gris.
+    private static void addWeaponLine(
+            ItemTooltipEvent event,
+            Player player,
+            ItemStack stack,
+            Holder<Attribute> attribute,
+            String displayName
+    ) {
+        EquipmentSlot slot = QualityTooltipBuilder.getTargetSlot(stack);
+
+        if (slot == null) return;
+
+        double playerBase = player.getAttributeBaseValue(attribute);
+
+        // 0 = planos del arma, 1 = planos de la calidad,
+        // 2 = porcentaje de la calidad.
+        double[] sums = new double[3];
+
+        stack.forEachModifier(slot, (modifierAttribute, modifier) -> {
+            if (!modifierAttribute.equals(attribute)) return;
+
+            boolean fromQuality =
+                    modifier.id().getNamespace().equals(Reforgium.MOD_ID);
+
+            switch (modifier.operation()) {
+                case ADD_VALUE -> sums[fromQuality ? 1 : 0] += modifier.amount();
+                case ADD_MULTIPLIED_BASE -> {
+                    if (fromQuality) {
+                        sums[2] += modifier.amount();
+                    }
+                }
+                default -> {
+                }
+            }
+        });
+
+        double weapon = sums[0];
+
+        // El porcentaje se calcula sobre base + planos, como hace el juego.
+        double quality = sums[1]
+                + (playerBase + weapon + sums[1]) * sums[2];
+
+        if (weapon == 0.0 && quality == 0.0) return;
+
+        double total = playerBase + weapon + quality;
+
+        StringBuilder detail = new StringBuilder(formatPrecise(playerBase));
+
+        if (weapon != 0.0) {
+            detail.append(weapon < 0 ? " - " : " + ")
+                    .append(formatPrecise(Math.abs(weapon)));
+        }
+
+        if (quality != 0.0) {
+            detail.append(quality < 0 ? " - " : " + ")
+                    .append(formatPrecise(Math.abs(quality)));
+        }
+
+        MutableComponent line = Component.literal(
+                "  " + (total < 0 ? "-" : "+")
+                        + formatPrecise(Math.abs(total)) + " " + displayName
+        ).withStyle(total < 0 ? ChatFormatting.RED : ChatFormatting.DARK_GREEN);
+
+        line.append(
+                Component.literal(" [" + detail + "]")
+                        .withStyle(ChatFormatting.GRAY)
+        );
+
+        event.getToolTip().add(line);
+    }
+
+    // Hasta 2 decimales, sin ceros de más.
+    private static String formatPrecise(double value) {
+        return String.format(
+                java.util.Locale.ROOT,
+                "%.2f",
+                value
+        ).replaceAll("\\.?0+$", "");
+    }
+
     private static String signed(double value) {
         return (value < 0 ? "-" : "+") + formatValue(Math.abs(value));
     }
@@ -316,7 +402,8 @@ public class QualityTooltipHandler {
             Player player,
             ItemStack stack,
             QualityAttribute qualityAttribute,
-            String displayName
+            String displayName,
+            ChatFormatting color
     ) {
 
         Holder<Attribute> attribute =
@@ -334,7 +421,7 @@ public class QualityTooltipHandler {
         event.getToolTip().add(
                 Component.literal(
                         "  " +displayName + ": " + formatValue(value)
-                ).withStyle(ChatFormatting.BLUE)
+                ).withStyle(color)
         );
     }
 

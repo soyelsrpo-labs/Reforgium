@@ -1,4 +1,3 @@
-
 package net.elsrpop.reforgium.reforge.block;
 
 import com.mojang.serialization.MapCodec;
@@ -7,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -40,9 +40,10 @@ public class ReforgeTableBlock extends BaseEntityBlock {
     }
 
     public ReforgeTableBlock() {
+        // Se puede romper y dropear con la mano. Al estar en los tags
+        // mineable/pickaxe y mineable/axe, con pico o hacha se rompe más rápido.
         this(BlockBehaviour.Properties.of()
                 .strength(4.0F)
-                .requiresCorrectToolForDrops()
         );
     }
 
@@ -91,6 +92,28 @@ public class ReforgeTableBlock extends BaseEntityBlock {
             BlockPos pos
     ) {
         return Shapes.empty();
+    }
+
+    // Al romper el bloque (o si es reemplazado, por ejemplo por una explosión)
+    // se sueltan los 4 slots: objeto, materiales y martillo.
+    @Override
+    protected void onRemove(
+            BlockState state,
+            Level level,
+            BlockPos pos,
+            BlockState newState,
+            boolean movedByPiston
+    ) {
+        if (!state.is(newState.getBlock())) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+
+            if (blockEntity instanceof ReforgeTableBlockEntity table) {
+                Containers.dropContents(level, pos, table);
+                level.updateNeighbourForOutputSignal(pos, this);
+            }
+        }
+
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Override
