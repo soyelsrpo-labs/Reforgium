@@ -22,5 +22,6 @@ public enum QualityAttribute {
     JUMP_HEIGHT,
     KNOCKBACK,
 
-    LIFE_STEAL
+    LIFE_STEAL,
+    POISON
 }

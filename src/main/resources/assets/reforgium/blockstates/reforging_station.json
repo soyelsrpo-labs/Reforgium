@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "reforgium:block/reforging_station",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "reforgium:block/reforging_station"
+    },
+    "facing=south": {
+      "model": "reforgium:block/reforging_station",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "reforgium:block/reforging_station",
+      "y": 180
+    }
+  }
+}

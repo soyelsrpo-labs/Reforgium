@@ -1,4 +1,3 @@
-
 package net.elsrpop.reforgium.quality.effect;
 
 import net.elsrpop.reforgium.Reforgium;
@@ -18,6 +17,8 @@ import net.elsrpop.reforgium.quality.QualityHelper;
 @EventBusSubscriber(modid = Reforgium.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class QualityEffectHandler {
 
+    private static final int POISON_DURATION = 100;
+
     @SubscribeEvent
     public static void onLivingDamage(LivingDamageEvent.Post event) {
         if (!(event.getEntity() instanceof LivingEntity target)) return;
@@ -28,28 +29,40 @@ public class QualityEffectHandler {
 
         if (quality == null) return;
 
-        // Efecto de la calidad Venenosa.
-        if (quality.id().equals("venomous")) {
-            target.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 0));
-        }
-
-        // Efecto de robo de vida.
         for (QualityModifier modifier : quality.modifiers()) {
-            if (modifier.attribute() != QualityAttribute.LIFE_STEAL) continue;
 
-            float healing;
+            // Veneno: el valor representa el nivel, no un porcentaje.
+            if (modifier.attribute() == QualityAttribute.POISON) {
 
-            if (modifier.percentage()) {
-                healing = (float) (event.getNewDamage() * modifier.value() / 100.0);
-            } else {
-                healing = (float) modifier.value();
+                int poisonLevel = Math.max(
+                        1,
+                        (int) Math.round(modifier.value())
+                );
+
+                target.addEffect(new MobEffectInstance(
+                        MobEffects.POISON,
+                        POISON_DURATION,
+                        poisonLevel - 1
+                ));
             }
 
-            if (healing > 0.0F) {
-                player.heal(healing);
-            }
+            // Robo de vida.
+            if (modifier.attribute() == QualityAttribute.LIFE_STEAL) {
 
-            break;
+                float healing;
+
+                if (modifier.percentage()) {
+                    healing = (float) (
+                            event.getNewDamage() * modifier.value() / 100.0
+                    );
+                } else {
+                    healing = (float) modifier.value();
+                }
+
+                if (healing > 0.0F) {
+                    player.heal(healing);
+                }
+            }
         }
     }
 }

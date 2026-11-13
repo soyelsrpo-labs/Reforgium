@@ -13,34 +13,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-import software.bernie.geckolib.animatable.GeoBlockEntity;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-
-public class ReforgeTableBlockEntity extends BlockEntity implements Container, GeoBlockEntity {
+public class ReforgeTableBlockEntity extends BlockEntity implements Container {
 
     public static final int SLOT_COUNT = 4;
 
     private final NonNullList<ItemStack> items =
             NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
 
-    private final AnimatableInstanceCache cache =
-            new SingletonAnimatableInstanceCache(this);
-
     public ReforgeTableBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.REFORGE_TABLE.get(), pos, state);
-    }
-
-    @Override
-    public void registerControllers(
-            AnimatableManager.ControllerRegistrar controllers
-    ) {
-    }
-
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return cache;
     }
 
     @Override

@@ -58,7 +58,9 @@ public class QualityTooltipHandler {
                 continue;
             }
 
-            String value = modifier.percentage()
+            String value = modifier.attribute() == QualityAttribute.POISON
+                    ? formatValue(Math.abs(modifier.value()))
+                    : modifier.percentage()
                     ? formatValue(Math.abs(modifier.value())) + "%"
                     : formatValue(Math.abs(modifier.value()));
 
@@ -520,6 +522,7 @@ public class QualityTooltipHandler {
             case LUCK -> "Suerte";
             case JUMP_HEIGHT -> "Altura al saltar";
             case KNOCKBACK -> "Empuje";
+            case POISON -> "Nivel de veneno";
 
             default -> null;
         };
