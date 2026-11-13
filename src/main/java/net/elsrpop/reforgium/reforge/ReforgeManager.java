@@ -80,7 +80,6 @@ public final class ReforgeManager {
      * Comprueba si el ingrediente principal es válido.
      * Acepta el material principal o una Estrella del Nether.
      */
-
     public static boolean isValidMainIngredient(
             ItemStack original,
             ItemStack ingredient,
@@ -94,11 +93,11 @@ public final class ReforgeManager {
             return true;
         }
 
-        Set<Item> mainMaterials = getMainMaterials(original, level);
+        Optional<Item> mainMaterial = getMainMaterial(original, level);
 
-        return mainMaterials.contains(ingredient.getItem());
+        return mainMaterial.isPresent()
+                && ingredient.is(mainMaterial.get());
     }
-
 
     /**
      * Realiza una reforja y devuelve una copia del objeto con su nueva calidad.
