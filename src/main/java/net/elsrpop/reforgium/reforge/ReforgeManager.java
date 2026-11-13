@@ -13,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import java.util.Set;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,11 +45,21 @@ public final class ReforgeManager {
     /**
      * Obtiene el material principal del objeto.
      */
+    public static Set<Item> getMainMaterials(
+            ItemStack stack,
+            Level level
+    ) {
+        return ReforgeIngredientResolver.findMainMaterials(stack, level);
+    }
+
+    // Se mantiene por compatibilidad con el código anterior.
     public static Optional<Item> getMainMaterial(
             ItemStack stack,
             Level level
     ) {
-        return ReforgeIngredientResolver.findMainMaterial(stack, level);
+        return getMainMaterials(stack, level)
+                .stream()
+                .findFirst();
     }
 
     /**
@@ -69,6 +80,7 @@ public final class ReforgeManager {
      * Comprueba si el ingrediente principal es válido.
      * Acepta el material principal o una Estrella del Nether.
      */
+
     public static boolean isValidMainIngredient(
             ItemStack original,
             ItemStack ingredient,
@@ -82,11 +94,11 @@ public final class ReforgeManager {
             return true;
         }
 
-        Optional<Item> mainMaterial = getMainMaterial(original, level);
+        Set<Item> mainMaterials = getMainMaterials(original, level);
 
-        return mainMaterial.isPresent()
-                && ingredient.is(mainMaterial.get());
+        return mainMaterials.contains(ingredient.getItem());
     }
+
 
     /**
      * Realiza una reforja y devuelve una copia del objeto con su nueva calidad.

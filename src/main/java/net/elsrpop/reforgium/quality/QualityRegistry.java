@@ -250,13 +250,13 @@ public class QualityRegistry {
                 QualityRarity.EXOTIC, EquipmentType.WEAPON,
                 modifier(QualityAttribute.LIFE_STEAL, 1, false),
                 modifier(QualityAttribute.ATTACK_DAMAGE, -2, false),
-                modifier(QualityAttribute.ATTACK_SPEED, -30, true));
+                modifier(QualityAttribute.ATTACK_SPEED, -25, true));
 
         register("venomous", "Venenosa", "",
                 QualityRarity.EXOTIC, EquipmentType.WEAPON,
-                modifier(QualityAttribute.ATTACK_DAMAGE, -1.5, false),
-                modifier(QualityAttribute.ATTACK_SPEED, -25, true),
-                modifier(QualityAttribute.POISON, 1, false));
+                modifier(QualityAttribute.ATTACK_DAMAGE, -1, false),
+                modifier(QualityAttribute.ATTACK_SPEED, -10, true),
+                modifier(QualityAttribute.POISON, 1, true));
 
         //legendarias
 
@@ -453,10 +453,10 @@ public class QualityRegistry {
         //Exóticas
 
         register("healty", "vivaz", "",
-                QualityRarity.BAD, EquipmentType.ARMOR,
+                QualityRarity.EXOTIC, EquipmentType.ARMOR,
                 modifier(QualityAttribute.MAX_HEALTH, 2, false),
                 modifier(QualityAttribute.ARMOR, -1, false),
-                modifier(QualityAttribute.MOVEMENT_SPEED, -15, true),
+                modifier(QualityAttribute.MOVEMENT_SPEED, -10, true),
                 modifier(QualityAttribute.MAX_DURABILITY, -40, true));
 
         //Legendarias
