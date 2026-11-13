@@ -1,6 +1,66 @@
 {
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "reforgium:block/reforging_station"
-  }
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"parent": "mesa_de_reforja",
+	"texture_size": [64, 64],
+	"textures": {
+		"0": "reforgin_station",
+		"particle": "reforgin_station"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 14, 16],
+			"faces": {
+				"north": {"uv": [4, 0, 8, 3.5], "texture": "#0"},
+				"east": {"uv": [4, 3.5, 8, 7], "texture": "#0"},
+				"south": {"uv": [4, 7, 8, 10.5], "texture": "#0"},
+				"west": {"uv": [0, 8, 4, 11.5], "texture": "#0"},
+				"up": {"uv": [0, 0, 4, 4], "texture": "#0"},
+				"down": {"uv": [0, 4, 4, 8], "texture": "#0"}
+			}
+		},
+		{
+			"from": [1, 14, 3],
+			"to": [3, 16, 7],
+			"rotation": {"angle": 22.5, "axis": "y", "origin": [1, 14, 5]},
+			"faces": {
+				"north": {"uv": [8, 5, 8.5, 5.5], "texture": "#0"},
+				"east": {"uv": [8, 2, 9, 2.5], "texture": "#0"},
+				"south": {"uv": [8, 5.5, 8.5, 6], "texture": "#0"},
+				"west": {"uv": [8, 2.5, 9, 3], "texture": "#0"},
+				"up": {"uv": [8, 3, 8.5, 4], "texture": "#0"},
+				"down": {"uv": [8, 4, 8.5, 5], "texture": "#0"}
+			}
+		},
+		{
+			"from": [3, 14, 4],
+			"to": [12, 16, 6],
+			"rotation": {"angle": 22.5, "axis": "y", "origin": [1, 13.5, 5]},
+			"faces": {
+				"north": {"uv": [8, 0, 10.25, 0.5], "texture": "#0"},
+				"east": {"uv": [8, 6, 8.5, 6.5], "texture": "#0"},
+				"south": {"uv": [8, 0.5, 10.25, 1], "texture": "#0"},
+				"west": {"uv": [8, 6.5, 8.5, 7], "texture": "#0"},
+				"up": {"uv": [8, 1, 10.25, 1.5], "texture": "#0"},
+				"down": {"uv": [8, 1.5, 10.25, 2], "texture": "#0"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "group",
+			"origin": [8, 8, 8],
+			"scope": 0,
+			"color": 0,
+			"children": [0]
+		},
+		{
+			"name": "group",
+			"origin": [0, 0, 0],
+			"scope": 0,
+			"color": 0,
+			"children": [1, 2]
+		}
+	]
 }
