@@ -1,6 +1,7 @@
 
 package net.elsrpop.reforgium.reforge.ingredient;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -22,56 +23,76 @@ public final class ReforgeIngredientResolver {
     }
 
     public static Set<Item> findMainMaterials(ItemStack stack, Level level) {
+
         Set<Item> materials = new LinkedHashSet<>();
 
         if (stack.isEmpty() || level == null) {
             return materials;
         }
 
+        /*
+         * HERRERÍA
+         *
+         * Buscamos recetas de transformación cuyo resultado
+         * sea el objeto que queremos reforjar.
+         *
+         * El único ingrediente que nos interesa es el de adición.
+         */
+        boolean foundSmithingRecipe = false;
 
-// RECETAS DE HERRERÍA
         for (RecipeHolder<SmithingRecipe> holder :
                 level.getRecipeManager().getAllRecipesFor(RecipeType.SMITHING)) {
 
             SmithingRecipe recipe = holder.value();
 
-            // Solo recetas de transformación.
-            if (!(recipe instanceof SmithingTransformRecipe)) {
+            if (!(recipe instanceof SmithingTransformRecipe transformRecipe)) {
                 continue;
             }
 
-            // Comprobar que el resultado sea el objeto que queremos reforjar.
-            ItemStack result = recipe.getResultItem(level.registryAccess());
+            ItemStack result = transformRecipe.getResultItem(level.registryAccess());
 
             if (result.isEmpty() || !ItemStack.isSameItem(result, stack)) {
                 continue;
             }
 
-            // 0 = plantilla
-            // 1 = objeto base
-            // 2 = material de adición
-            var ingredients = recipe.getIngredients();
+            foundSmithingRecipe = true;
 
-            if (ingredients.size() < 3) {
-                continue;
-            }
+            /*
+             * No usamos getIngredients().
+             *
+             * Comprobamos directamente qué objetos acepta
+             * la receta como material de adición.
+             */
+            for (Item item : BuiltInRegistries.ITEM) {
 
-            Ingredient addition = ingredients.get(2);
+                if (item == Items.AIR) {
+                    continue;
+                }
 
-            // Obtener todos los materiales posibles.
-            for (ItemStack candidate : addition.getItems()) {
-                if (!candidate.isEmpty()) {
-                    materials.add(candidate.getItem());
+                ItemStack candidate = new ItemStack(item);
+
+                if (transformRecipe.isAdditionIngredient(candidate)) {
+                    materials.add(item);
                 }
             }
         }
 
-
-        if (!materials.isEmpty()) {
+        /*
+         * Si encontramos una receta de herrería para este objeto,
+         * devolvemos sus materiales aunque el conjunto esté vacío.
+         *
+         * Así evitamos mezclar materiales de recetas de crafteo.
+         */
+        if (foundSmithingRecipe) {
             return materials;
         }
 
-        // RECETAS DE CRAFTEO
+        /*
+         * CRAFTEO
+         *
+         * Si no existe una receta de herrería aplicable,
+         * buscamos los materiales de las recetas de crafteo.
+         */
         for (RecipeHolder<CraftingRecipe> holder :
                 level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING)) {
 
@@ -84,6 +105,7 @@ public final class ReforgeIngredientResolver {
             }
 
             for (Ingredient ingredient : recipe.getIngredients()) {
+
                 for (ItemStack candidate : ingredient.getItems()) {
 
                     if (candidate.isEmpty()) {
@@ -92,7 +114,6 @@ public final class ReforgeIngredientResolver {
 
                     Item item = candidate.getItem();
 
-                    // Excluir palos de los crafteos.
                     if (isStick(item)) {
                         continue;
                     }
@@ -110,18 +131,20 @@ public final class ReforgeIngredientResolver {
     }
 
     private static boolean isStick(Item item) {
+
         if (item == Items.STICK) {
             return true;
         }
 
-        String path = net.minecraft.core.registries.BuiltInRegistries.ITEM
-                .getKey(item)
-                .getPath();
+        String path = BuiltInRegistries.ITEM.getKey(item).getPath();
 
         return path.contains("stick");
     }
 
-    public static Optional<Item> findMainMaterial(ItemStack stack, Level level) {
+    public static Optional<Item> findMainMaterial(
+            ItemStack stack,
+            Level level
+    ) {
         return findMainMaterials(stack, level)
                 .stream()
                 .findFirst();
