@@ -92,11 +92,9 @@ public final class ReforgeManager {
         if (ingredient.is(Items.NETHER_STAR)) {
             return true;
         }
+        Set<Item> mainMaterials = getMainMaterials(original, level);
 
-        Optional<Item> mainMaterial = getMainMaterial(original, level);
-
-        return mainMaterial.isPresent()
-                && ingredient.is(mainMaterial.get());
+        return mainMaterials.contains(ingredient.getItem());
     }
 
     /**

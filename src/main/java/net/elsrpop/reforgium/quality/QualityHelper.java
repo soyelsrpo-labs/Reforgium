@@ -1,3 +1,4 @@
+
 package net.elsrpop.reforgium.quality;
 
 import net.elsrpop.reforgium.quality.attribute.QualityAttribute;
@@ -16,49 +17,80 @@ public class QualityHelper {
 
         if (!EquipmentTypeHelper.isCompatible(stack, quality)) return false;
 
-        // Guardamos la durabilidad original la primera vez.
-        Integer originalMaxDamage = stack.get(ModDataComponents.ORIGINAL_MAX_DAMAGE.get());
+        // Comprobamos si el objeto tiene durabilidad.
+        int currentMaxDamage = stack.getMaxDamage();
 
-        if (originalMaxDamage == null) {
-            originalMaxDamage = stack.getMaxDamage();
-            stack.set(ModDataComponents.ORIGINAL_MAX_DAMAGE.get(), originalMaxDamage);
-        }
+        if (currentMaxDamage > 0) {
 
-        // Restauramos temporalmente la durabilidad original.
-        stack.set(DataComponents.MAX_DAMAGE, originalMaxDamage);
+            // Recuperamos la durabilidad original si ya estaba guardada.
+            Integer originalMaxDamage =
+                    stack.get(ModDataComponents.ORIGINAL_MAX_DAMAGE.get());
 
-        // Buscamos el modificador de durabilidad.
-        for (QualityModifier modifier : quality.modifiers()) {
-            if (modifier.attribute() == QualityAttribute.MAX_DURABILITY) {
-                int newMaxDamage;
+            if (originalMaxDamage == null || originalMaxDamage <= 0) {
+                originalMaxDamage = currentMaxDamage;
 
-                if (modifier.percentage()) {
-                    newMaxDamage = (int) Math.round(
-                            originalMaxDamage * (1.0 + modifier.value() / 100.0)
-                    );
-                } else {
-                    newMaxDamage = (int) Math.round(
-                            originalMaxDamage + modifier.value()
-                    );
-                }
-
-                stack.set(DataComponents.MAX_DAMAGE, Math.max(1, newMaxDamage));
-                break;
+                stack.set(
+                        ModDataComponents.ORIGINAL_MAX_DAMAGE.get(),
+                        originalMaxDamage
+                );
             }
+
+            // Restauramos la durabilidad original antes de aplicar la calidad.
+            stack.set(DataComponents.MAX_DAMAGE, originalMaxDamage);
+
+            // Aplicamos el modificador de durabilidad de la calidad.
+            for (QualityModifier modifier : quality.modifiers()) {
+
+                if (modifier.attribute() == QualityAttribute.MAX_DURABILITY) {
+
+                    int newMaxDamage;
+
+                    if (modifier.percentage()) {
+                        newMaxDamage = (int) Math.round(
+                                originalMaxDamage *
+                                        (1.0 + modifier.value() / 100.0)
+                        );
+                    } else {
+                        newMaxDamage = (int) Math.round(
+                                originalMaxDamage + modifier.value()
+                        );
+                    }
+
+                    // MAX_DAMAGE siempre debe ser mayor que cero.
+                    stack.set(
+                            DataComponents.MAX_DAMAGE,
+                            Math.max(1, newMaxDamage)
+                    );
+
+                    break;
+                }
+            }
+
+        } else {
+
+            // El objeto no tiene durabilidad.
+            // No debemos asignarle MAX_DAMAGE ni guardar un valor cero.
+            stack.remove(DataComponents.MAX_DAMAGE);
+            stack.remove(ModDataComponents.ORIGINAL_MAX_DAMAGE.get());
         }
 
+        // La calidad se aplica incluso si el objeto no tiene durabilidad.
         stack.set(ModDataComponents.QUALITY.get(), qualityId);
+
         return true;
     }
 
     public static String getQualityId(ItemStack stack) {
         if (stack.isEmpty()) return null;
+
         return stack.get(ModDataComponents.QUALITY.get());
     }
 
     public static QualityDefinition getQuality(ItemStack stack) {
         String qualityId = getQualityId(stack);
+
         if (qualityId == null) return null;
+
         return QualityManager.getById(qualityId);
     }
 
@@ -69,10 +101,17 @@ public class QualityHelper {
     public static void removeQuality(ItemStack stack) {
         if (stack.isEmpty()) return;
 
-        Integer originalMaxDamage = stack.get(ModDataComponents.ORIGINAL_MAX_DAMAGE.get());
+        Integer originalMaxDamage =
+                stack.get(ModDataComponents.ORIGINAL_MAX_DAMAGE.get());
 
         if (originalMaxDamage != null) {
-            stack.set(DataComponents.MAX_DAMAGE, originalMaxDamage);
+
+            if (originalMaxDamage > 0) {
+                stack.set(DataComponents.MAX_DAMAGE, originalMaxDamage);
+            } else {
+                stack.remove(DataComponents.MAX_DAMAGE);
+            }
+
             stack.remove(ModDataComponents.ORIGINAL_MAX_DAMAGE.get());
         }
 

@@ -28,26 +28,28 @@ public final class ReforgeIngredientResolver {
             return materials;
         }
 
-        // RECETAS DE HERRERÍA
+
+// RECETAS DE HERRERÍA
         for (RecipeHolder<SmithingRecipe> holder :
                 level.getRecipeManager().getAllRecipesFor(RecipeType.SMITHING)) {
 
             SmithingRecipe recipe = holder.value();
 
-            // Solo nos interesan las recetas que transforman un objeto.
+            // Solo recetas de transformación.
             if (!(recipe instanceof SmithingTransformRecipe)) {
                 continue;
             }
 
-            // El objeto colocado debe coincidir con el ingrediente base.
-            if (!recipe.isBaseIngredient(stack)) {
+            // Comprobar que el resultado sea el objeto que queremos reforjar.
+            ItemStack result = recipe.getResultItem(level.registryAccess());
+
+            if (result.isEmpty() || !ItemStack.isSameItem(result, stack)) {
                 continue;
             }
 
-            // En una receta de transformación:
             // 0 = plantilla
-            // 1 = ingrediente base
-            // 2 = ingrediente de adición
+            // 1 = objeto base
+            // 2 = material de adición
             var ingredients = recipe.getIngredients();
 
             if (ingredients.size() < 3) {
@@ -56,13 +58,14 @@ public final class ReforgeIngredientResolver {
 
             Ingredient addition = ingredients.get(2);
 
-            // Devolvemos todos los materiales aceptados por la adición.
+            // Obtener todos los materiales posibles.
             for (ItemStack candidate : addition.getItems()) {
                 if (!candidate.isEmpty()) {
                     materials.add(candidate.getItem());
                 }
             }
         }
+
 
         if (!materials.isEmpty()) {
             return materials;
