@@ -31,15 +31,14 @@ public final class ReforgeManager {
      */
     public static boolean canReforge(ItemStack stack, Level level) {
 
-        if (stack.isEmpty() || level == null) {
+        if (stack.isEmpty()) {
             return false;
         }
 
-        if (stack.getMaxDamage() <= 0) {
-            return false;
-        }
-
-        return EquipmentTypeHelper.getType(stack) != null;
+        return QualityManager.getAll().stream()
+                .anyMatch(quality ->
+                        EquipmentTypeHelper.isCompatible(stack, quality)
+                );
     }
 
     /**

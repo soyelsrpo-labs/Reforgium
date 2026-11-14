@@ -2,15 +2,24 @@
 package net.elsrpop.reforgium.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.elsrpop.reforgium.quality.QualityTooltipHandler;
 import net.elsrpop.reforgium.reforge.ReforgeManager;
 import net.elsrpop.reforgium.reforge.menu.ReforgeMenu;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -26,24 +35,15 @@ public class ReforgeScreen extends AbstractContainerScreen<ReforgeMenu> {
                     "textures/gui/reforging_station.png"
             );
 
-    // Transparencia del objeto de vista previa.
     private static final float PREVIEW_OPACITY = 0.25F;
-
-    // Tiempo entre cambios: 20 ticks = aproximadamente 1 segundo.
     private static final int PREVIEW_CHANGE_INTERVAL = 20;
 
     private TexturedButton reforgeButton;
 
-    // Materiales compatibles con el objeto actual.
     private List<Item> requiredMaterials = List.of();
-
-    // Copia del objeto para detectar cuándo cambia el slot principal.
     private ItemStack lastPreviewSource = ItemStack.EMPTY;
 
-    // Índice del material que se está mostrando.
     private int previewIndex = 0;
-
-    // Contador para controlar la animación.
     private int previewTicks = 0;
 
     public ReforgeScreen(
@@ -59,9 +59,6 @@ public class ReforgeScreen extends AbstractContainerScreen<ReforgeMenu> {
 
     /*
      * ACTUALIZACIÓN DE MATERIALES
-     *
-     * Solo volvemos a buscar los materiales cuando cambia
-     * el objeto colocado en el slot principal.
      */
     private void updateRequiredMaterials() {
 
@@ -78,7 +75,6 @@ public class ReforgeScreen extends AbstractContainerScreen<ReforgeMenu> {
             return;
         }
 
-        // Si el objeto no cambió, no volvemos a calcular los materiales.
         if (ItemStack.matches(lastPreviewSource, original)) {
             return;
         }
@@ -92,15 +88,12 @@ public class ReforgeScreen extends AbstractContainerScreen<ReforgeMenu> {
 
         requiredMaterials = new ArrayList<>(materials);
 
-        // Reiniciamos la animación al cambiar el objeto.
         previewIndex = 0;
         previewTicks = 0;
     }
 
     /*
      * ANIMACIÓN
-     *
-     * Cambia el material mostrado cada 20 ticks.
      */
     private void tickPreviewAnimation() {
 
@@ -113,7 +106,6 @@ public class ReforgeScreen extends AbstractContainerScreen<ReforgeMenu> {
         if (previewTicks >= PREVIEW_CHANGE_INTERVAL) {
 
             previewTicks = 0;
-
             previewIndex++;
 
             if (previewIndex >= requiredMaterials.size()) {
@@ -123,7 +115,7 @@ public class ReforgeScreen extends AbstractContainerScreen<ReforgeMenu> {
     }
 
     /*
-     * OBTENER EL MATERIAL ACTUAL DE LA ANIMACIÓN
+     * MATERIAL ACTUAL
      */
     private Item getCurrentPreviewMaterial() {
 
@@ -143,7 +135,6 @@ public class ReforgeScreen extends AbstractContainerScreen<ReforgeMenu> {
      */
     private void renderMainIngredientPreview(GuiGraphics graphics) {
 
-        // No mostramos la vista previa si el slot ya tiene un objeto.
         if (menu.getSlot(2).hasItem()) {
             return;
         }
@@ -156,7 +147,6 @@ public class ReforgeScreen extends AbstractContainerScreen<ReforgeMenu> {
 
         ItemStack preview = new ItemStack(currentMaterial);
 
-        // Activamos la transparencia.
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
@@ -169,15 +159,25 @@ public class ReforgeScreen extends AbstractContainerScreen<ReforgeMenu> {
 
         try {
 
-            graphics.renderItem(
-                    preview,
-                    leftPos + 28,
-                    topPos + 45
-            );
+            // BLOQUES: usamos una capa translúcida.
+            if (currentMaterial instanceof BlockItem) {
+
+                renderTranslucentBlockPreview(graphics, preview);
+
+            } else {
+
+                // OBJETOS NORMALES: conservamos el renderizado anterior.
+                graphics.renderItem(
+                        preview,
+                        leftPos + 28,
+                        topPos + 45
+                );
+
+                graphics.flush();
+            }
 
         } finally {
 
-            // Restauramos el color y la transparencia.
             RenderSystem.setShaderColor(
                     1.0F,
                     1.0F,
@@ -186,6 +186,67 @@ public class ReforgeScreen extends AbstractContainerScreen<ReforgeMenu> {
             );
 
             RenderSystem.disableBlend();
+        }
+    }
+
+    /*
+     * RENDERIZADO TRANSLÚCIDO DE BLOQUES
+     */
+    private void renderTranslucentBlockPreview(
+            GuiGraphics graphics,
+            ItemStack stack
+    ) {
+
+        Minecraft mc = Minecraft.getInstance();
+
+        if (mc.level == null) {
+            return;
+        }
+
+        PoseStack pose = graphics.pose();
+
+        pose.pushPose();
+
+        try {
+
+            pose.translate(
+                    leftPos + 36,
+                    topPos + 53,
+                    150.0F
+            );
+
+            pose.scale(16.0F, 16.0F, 16.0F);
+
+            /*
+             * Redirigimos los buffers del modelo del bloque
+             * a una capa que permite transparencia.
+             */
+            MultiBufferSource translucentBuffers = renderType ->
+                    graphics.bufferSource().getBuffer(
+                            RenderType.entityTranslucent(
+                                    TextureAtlas.LOCATION_BLOCKS
+                            )
+                    );
+
+            ItemRenderer itemRenderer = mc.getItemRenderer();
+
+            itemRenderer.renderStatic(
+                    stack,
+                    ItemDisplayContext.GUI,
+                    15728880,
+                    OverlayTexture.NO_OVERLAY,
+                    pose,
+                    translucentBuffers,
+                    mc.level,
+                    0
+            );
+
+        } finally {
+
+            pose.popPose();
+
+            // Dibujamos antes de restaurar la opacidad.
+            graphics.flush();
         }
     }
 
@@ -201,7 +262,6 @@ public class ReforgeScreen extends AbstractContainerScreen<ReforgeMenu> {
         int slotX = leftPos + 28;
         int slotY = topPos + 45;
 
-        // Comprobamos si el mouse está sobre el slot.
         if (mouseX < slotX || mouseX >= slotX + 16
                 || mouseY < slotY || mouseY >= slotY + 16) {
             return;
@@ -272,10 +332,7 @@ public class ReforgeScreen extends AbstractContainerScreen<ReforgeMenu> {
 
         super.containerTick();
 
-        // Detectamos cambios en el objeto principal.
         updateRequiredMaterials();
-
-        // Avanzamos la animación.
         tickPreviewAnimation();
 
         if (reforgeButton != null) {
@@ -284,7 +341,7 @@ public class ReforgeScreen extends AbstractContainerScreen<ReforgeMenu> {
     }
 
     /*
-     * FONDO DE LA INTERFAZ
+     * FONDO
      */
     @Override
     protected void renderBg(
@@ -308,7 +365,7 @@ public class ReforgeScreen extends AbstractContainerScreen<ReforgeMenu> {
     }
 
     /*
-     * TEXTOS DE LA INTERFAZ
+     * TEXTOS
      */
     @Override
     protected void renderLabels(
@@ -432,7 +489,6 @@ public class ReforgeScreen extends AbstractContainerScreen<ReforgeMenu> {
             float partialTick
     ) {
 
-        // Actualizamos por si el objeto cambió antes del siguiente tick.
         updateRequiredMaterials();
 
         super.render(graphics, mouseX, mouseY, partialTick);

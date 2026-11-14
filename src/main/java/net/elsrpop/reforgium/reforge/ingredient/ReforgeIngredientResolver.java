@@ -13,11 +13,14 @@ import net.minecraft.world.item.crafting.SmithingRecipe;
 import net.minecraft.world.item.crafting.SmithingTransformRecipe;
 import net.minecraft.world.level.Level;
 
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
 public final class ReforgeIngredientResolver {
+
+    private static final int MAX_CRAFTING_MATERIALS = 2;
 
     private ReforgeIngredientResolver() {
     }
@@ -33,10 +36,8 @@ public final class ReforgeIngredientResolver {
         /*
          * HERRERÍA
          *
-         * Buscamos recetas de transformación cuyo resultado
-         * sea el objeto que queremos reforjar.
-         *
-         * El único ingrediente que nos interesa es el de adición.
+         * Conservamos el comportamiento anterior:
+         * se aceptan todos los materiales de adición compatibles.
          */
         boolean foundSmithingRecipe = false;
 
@@ -57,12 +58,6 @@ public final class ReforgeIngredientResolver {
 
             foundSmithingRecipe = true;
 
-            /*
-             * No usamos getIngredients().
-             *
-             * Comprobamos directamente qué objetos acepta
-             * la receta como material de adición.
-             */
             for (Item item : BuiltInRegistries.ITEM) {
 
                 if (item == Items.AIR) {
@@ -77,12 +72,6 @@ public final class ReforgeIngredientResolver {
             }
         }
 
-        /*
-         * Si encontramos una receta de herrería para este objeto,
-         * devolvemos sus materiales aunque el conjunto esté vacío.
-         *
-         * Así evitamos mezclar materiales de recetas de crafteo.
-         */
         if (foundSmithingRecipe) {
             return materials;
         }
@@ -90,9 +79,12 @@ public final class ReforgeIngredientResolver {
         /*
          * CRAFTEO
          *
-         * Si no existe una receta de herrería aplicable,
-         * buscamos los materiales de las recetas de crafteo.
+         * Reunimos los ingredientes posibles y después
+         * seleccionamos como máximo dos, priorizando
+         * los materiales valiosos.
          */
+        Set<Item> candidates = new LinkedHashSet<>();
+
         for (RecipeHolder<CraftingRecipe> holder :
                 level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING)) {
 
@@ -122,12 +114,71 @@ public final class ReforgeIngredientResolver {
                         continue;
                     }
 
-                    materials.add(item);
+                    candidates.add(item);
                 }
             }
         }
 
+        /*
+         * ORDEN DE PRIORIDAD
+         *
+         * 0 = Lingotes y gemas.
+         * 1 = Pepitas.
+         * 2 = Cristales, fragmentos y materiales similares.
+         * 3 = Otros ingredientes.
+         */
+        candidates.stream()
+                .sorted(
+                        Comparator
+                                .comparingInt(ReforgeIngredientResolver::getMaterialPriority)
+                                .thenComparing(item ->
+                                        BuiltInRegistries.ITEM.getKey(item).toString()
+                                )
+                )
+                .limit(MAX_CRAFTING_MATERIALS)
+                .forEach(materials::add);
+
         return materials;
+    }
+
+    /*
+     * PRIORIDAD DE LOS MATERIALES
+     */
+    private static int getMaterialPriority(Item item) {
+
+        String path = BuiltInRegistries.ITEM.getKey(item).getPath();
+
+        // Lingotes.
+        if (path.endsWith("_ingot") || path.contains("ingot")) {
+            return 0;
+        }
+
+        // Gemas y piedras preciosas.
+        if (path.endsWith("_gem")
+                || path.equals("diamond")
+                || path.equals("emerald")
+                || path.equals("amethyst_shard")
+                || path.equals("prismarine_shard")
+                || path.equals("quartz")) {
+            return 0;
+        }
+
+        // Otros materiales valiosos.
+        if (path.contains("crystal")
+                || path.contains("shard")
+                || path.contains("pearl")
+                || path.contains("fragment")
+                || path.contains("essence")) {
+            return 1;
+        }
+
+        // Pepitas.
+        if (path.endsWith("_nugget") || path.contains("nugget")) {
+            return 2;
+        }
+
+        // Ingredientes restantes.
+        return 3;
     }
 
     private static boolean isStick(Item item) {

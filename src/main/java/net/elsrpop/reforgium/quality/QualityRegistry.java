@@ -289,7 +289,7 @@ public class QualityRegistry {
                 modifier(QualityAttribute.MAX_DURABILITY, 40, true),
                 modifier(QualityAttribute.KNOCKBACK, 1, false));
 
-        register("Sagrada", "Sagrada", "",
+        register("sagrada", "Sagrada", "",
                 QualityRarity.LEGENDARY, EquipmentType.WEAPON,
                 modifier(QualityAttribute.ATTACK_DAMAGE, 3, false),
                 modifier(QualityAttribute.KNOCKBACK, 3, false));
